@@ -1,7 +1,9 @@
 const express = require('express');
+const path = require('path');
 const app = express();
 
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
 let cars = [
   {
@@ -14,6 +16,12 @@ let cars = [
     id: 2,
     title: "Kia K5 2021",
     price: "$18,500",
+    link: "https://www.encar.com"
+  },
+  {
+    id: 3,
+    title: "Hyundai Grandeur 2022",
+    price: "$24,000",
     link: "https://www.encar.com"
   }
 ];
@@ -31,6 +39,10 @@ app.post('/lead', (req, res) => {
   console.log("Авто:", car);
 
   res.json({ status: "ok" });
+});
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.listen(3000, () => {
