@@ -29,7 +29,6 @@
       border-radius: 999px;
       font-size: 14px;
       margin-bottom: 16px;
-      backdrop-filter: blur(8px);
     }
     h1 {
       margin: 0;
@@ -56,7 +55,6 @@
       border-radius: 14px;
       text-decoration: none;
       font-weight: 700;
-      transition: .2s;
     }
     .btn {
       background: #2f6bff;
@@ -68,31 +66,12 @@
     }
     .section {
       padding: 38px 20px;
-    }
-    .section-light {
       background: #f5f7fb;
       color: #111827;
     }
     .section h2 {
       margin: 0 0 18px;
       font-size: 30px;
-    }
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-      margin-top: 22px;
-    }
-    .feature {
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 18px;
-      padding: 18px;
-    }
-    .section-light .feature {
-      background: white;
-      border: 1px solid #e5e7eb;
-      box-shadow: 0 8px 30px rgba(17,24,39,.06);
     }
     .cars {
       display: grid;
@@ -159,10 +138,7 @@
       grid-template-columns: 1.1fr .9fr;
       gap: 24px;
       align-items: start;
-    }
-    .lead-info {
-      color: #374151;
-      line-height: 1.7;
+      margin-top: 30px;
     }
     .form-card {
       background: white;
@@ -182,140 +158,3 @@
     .form-card button {
       background: #2f6bff;
       color: white;
-      font-weight: 800;
-      border: none;
-      cursor: pointer;
-    }
-    #status {
-      margin-top: 12px;
-      font-weight: 700;
-    }
-    footer {
-      padding: 26px 20px 40px;
-      background: #0b1020;
-      color: #95a1c4;
-      text-align: center;
-    }
-    @media (max-width: 860px) {
-      h1 { font-size: 32px; }
-      .lead-box { grid-template-columns: 1fr; }
-    }
-  </style>
-</head>
-<body>
-  <section class="hero">
-    <div class="wrap">
-      <div class="badge">Авто из Кореи • Под ключ • Казахстан</div>
-      <h1>Подбор, проверка и доставка автомобилей из Кореи</h1>
-      <div class="sub">
-        Помогаем подобрать живые автомобили с Encar, проверяем варианты,
-        согласовываем бюджет и отправляем авто под клиента.
-      </div>
-      <div class="hero-actions">
-        <a class="btn" href="#cars-block">Смотреть авто</a>
-        <a class="btn-outline" href="#lead-block">Оставить заявку</a>
-      </div>
-
-      <div class="features">
-        <div class="feature">Проверка вариантов перед покупкой</div>
-        <div class="feature">Подбор под бюджет клиента</div>
-        <div class="feature">Работаем с реальными лотами Encar</div>
-        <div class="feature">Заявки сразу приходят в Telegram</div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-light" id="cars-block">
-    <div class="wrap">
-      <h2>Актуальные модели</h2>
-      <div class="cars" id="cars"></div>
-    </div>
-  </section>
-
-  <section class="section section-light" id="lead-block">
-    <div class="wrap lead-box">
-      <div>
-        <h2>Оставить заявку</h2>
-        <div class="lead-info">
-          Напиши, какой автомобиль тебе нужен, и мы подберём варианты из Кореи.
-          После отправки заявки ты получишь ответ, а сообщение сразу придёт тебе в Telegram.
-        </div>
-      </div>
-
-      <div class="form-card">
-        <input type="text" id="name" placeholder="Ваше имя" />
-        <input type="text" id="phone" placeholder="Ваш телефон / WhatsApp" />
-        <input type="text" id="car" placeholder="Какой автомобиль интересует" />
-        <button onclick="sendLead()">Отправить заявку</button>
-        <div id="status"></div>
-      </div>
-    </div>
-  </section>
-
-  <footer>
-    © 2026 • Авто из Кореи в Казахстан
-  </footer>
-
-  <script>
-    async function loadCars() {
-      const res = await fetch('/cars');
-      const cars = await res.json();
-      const container = document.getElementById('cars');
-
-      container.innerHTML = cars.map(car => `
-        <div class="card">
-          <img src="${car.image}" alt="${car.title}">
-          <div class="card-body">
-            <h3>${car.title}</h3>
-            <div class="meta">${car.year} • ${car.fuel}</div>
-            <div class="price">${car.price}</div>
-            <div class="card-actions">
-              <a class="small-btn link" href="${car.link}" target="_blank">Открыть Encar</a>
-              <button class="small-btn primary" onclick="chooseCar('${car.title}')">Хочу этот авто</button>
-            </div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function chooseCar(title) {
-      document.getElementById('car').value = title;
-      document.getElementById('lead-block').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    async function sendLead() {
-      const name = document.getElementById('name').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      const car = document.getElementById('car').value.trim();
-      const status = document.getElementById('status');
-
-      if (!name || !phone || !car) {
-        status.innerText = 'Заполните все поля';
-        status.style.color = 'crimson';
-        return;
-      }
-
-      const res = await fetch('/lead', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, phone, car })
-      });
-
-      const data = await res.json();
-
-      if (data.status === 'ok') {
-        status.innerText = 'Заявка отправлена';
-        status.style.color = 'green';
-        document.getElementById('name').value = '';
-        document.getElementById('phone').value = '';
-        document.getElementById('car').value = '';
-      } else {
-        status.innerText = data.message || 'Ошибка отправки';
-        status.style.color = 'crimson';
-      }
-    }
-
-    loadCars();
-  </script>
-</body>
-</html>
